@@ -3,33 +3,31 @@
 
 PID_FILE="/var/run/myscript.pid"
 
-# Write PID to file
-echo $$ > "$PID_FILE"
+# Ensure directory exists (fails silently if not permitted)
+mkdir -p /var/run 2>/dev/null
 
-# SIGTERM handler
+# Write PID file (fallback-safe)
+echo $$ > "$PID_FILE" 2>/dev/null
+
 term_handler() {
     echo "I hate the kill command"
     rm -f "$PID_FILE"
     exit 0
 }
 
-# SIGINT handler
 int_handler() {
     echo "Y U no love me?!"
 }
 
-# SIGQUIT handler
 quit_handler() {
     rm -f "$PID_FILE"
     exit 0
 }
 
-# Trap signals
 trap term_handler SIGTERM
 trap int_handler SIGINT
 trap quit_handler SIGQUIT
 
-# Infinite loop
 while true
 do
     echo "To infinity and beyond"
