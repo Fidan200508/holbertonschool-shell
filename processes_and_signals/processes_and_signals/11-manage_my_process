@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Manages the manage_my_process daemon
+
+PID_FILE="/var/run/my_process.pid"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROCESS="$SCRIPT_DIR/manage_my_process"
+
+case "$1" in
+    start)
+        "$PROCESS" > /dev/null 2>&1 &
+        echo $! > "$PID_FILE"
+        echo "manage_my_process started"
+        ;;
+    stop)
+        kill "$(cat "$PID_FILE")" 2>/dev/null
+        rm -f "$PID_FILE"
+        echo "manage_my_process stopped"
+        ;;
+    restart)
+        kill "$(cat "$PID_FILE")" 2>/dev/null
+        rm -f "$PID_FILE"
+        "$PROCESS" > /dev/null 2>&1 &
+        echo $! > "$PID_FILE"
+        echo "manage_my_process restarted"
+        ;;
+    *)
+        echo "Usage: manage_my_process {start|stop|restart}"
+        exit 1
+        ;;
+esac
