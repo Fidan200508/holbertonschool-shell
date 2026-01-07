@@ -3,6 +3,8 @@
 
 PID_FILE="/var/run/myscript.pid"
 
+trap '' SIGHUP
+
 # Create PID file
 echo $$ > "$PID_FILE"
 
