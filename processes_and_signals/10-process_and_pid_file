@@ -1,33 +1,24 @@
 #!/usr/bin/env bash
-# Creates a PID file and handles signals like a daemon
+# Creates a PID file and handles signals
 
-PID_FILE="/var/run/myscript.pid"
+echo $$ > /var/run/myscript.pid
 
-# Detach from terminal / process group
-if [ -z "$DETACHED" ]; then
-    DETACHED=1 setsid "$0" &
-    exit 0
-fi
-
-# Create PID file
-echo $$ > "$PID_FILE"
-
-term_handler() {
+sigterm_handler() {
     echo "I hate the kill command"
 }
 
-int_handler() {
+sigint_handler() {
     echo "Y U no love me?!"
 }
 
-quit_handler() {
-    rm -f "$PID_FILE"
+sigquit_handler() {
+    rm -f /var/run/myscript.pid
     exit 0
 }
 
-trap term_handler SIGTERM
-trap int_handler SIGINT
-trap quit_handler SIGQUIT
+trap sigterm_handler SIGTERM
+trap sigint_handler SIGINT
+trap sigquit_handler SIGQUIT
 
 while true
 do
