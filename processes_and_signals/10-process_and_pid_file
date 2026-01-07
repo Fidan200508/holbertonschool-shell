@@ -3,11 +3,8 @@
 
 PID_FILE="/var/run/myscript.pid"
 
-# Ensure directory exists (fails silently if not permitted)
-mkdir -p /var/run 2>/dev/null
-
-# Write PID file (fallback-safe)
-echo $$ > "$PID_FILE" 2>/dev/null
+# Create PID file
+echo $$ > "$PID_FILE"
 
 term_handler() {
     echo "I hate the kill command"
