@@ -1,34 +1,34 @@
 #!/usr/bin/env bash
-# Displays a message indefinitely and handles signals with a PID file
+# Creates a PID file and handles signals like a daemon
 
 PID_FILE="/var/run/myscript.pid"
 
-# Write PID
+# Detach from terminal / process group
+if [ -z "$DETACHED" ]; then
+    DETACHED=1 setsid "$0" &
+    exit 0
+fi
+
+# Create PID file
 echo $$ > "$PID_FILE"
 
-# SIGINT handler (Ctrl+C)
-sigint_handler() {
+term_handler() {
+    echo "I hate the kill command"
+}
+
+int_handler() {
     echo "Y U no love me?!"
 }
 
-# SIGTERM handler
-sigterm_handler() {
-    echo "I hate the kill command"
+quit_handler() {
     rm -f "$PID_FILE"
     exit 0
 }
 
-# SIGQUIT handler
-sigquit_handler() {
-    rm -f "$PID_FILE"
-    exit 0
-}
+trap term_handler SIGTERM
+trap int_handler SIGINT
+trap quit_handler SIGQUIT
 
-trap sigint_handler SIGINT
-trap sigterm_handler SIGTERM
-trap sigquit_handler SIGQUIT
-
-# Infinite loop
 while true
 do
     echo "To infinity and beyond"
