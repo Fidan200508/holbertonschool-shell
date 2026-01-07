@@ -3,11 +3,16 @@
 
 PID_FILE="/var/run/myscript.pid"
 
-# Create PID file
-echo $$ > "$PID_FILE"
+# Do not start if already running
+if [ -e "$PID_FILE" ]; then
+    exit 0
+fi
 
 # Ignore SIGHUP
 trap '' SIGHUP
+
+# Create PID file
+echo $$ > "$PID_FILE"
 
 term_handler() {
     echo "I hate the kill command"
